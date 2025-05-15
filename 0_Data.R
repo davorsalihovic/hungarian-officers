@@ -248,8 +248,8 @@ collapsed <- as.data.frame(collapsed)
 collapsed <- collapsed[!is.na(collapsed$time0),]
 
  # Prepare data for analysis
-d1 <- d[, c("id", "start_since_king", "stop_since_king",  "start", "stop", "status", "p_id", "name", "office", "king_dismissed", "castles")]
-names(d1) <- c("id", "time0", "time1", "start", "stop", "status", "p_id", "name", "office", "king", "castles")
+d1 <- d[, c("id", "start_since_king", "stop_since_king",  "start", "stop", "status", "p_id", "name", "office", "king_appointed", "king_dismissed", "castles")]
+names(d1) <- c("id", "time0", "time1", "start", "stop", "status", "p_id", "name", "office", "king_ap", "king", "castles")
 d1$year <- substr(d1$stop, 1, 4)
 d1$angevine_regime <- ifelse(d1$year <= 1382, 1, 0)
 d1$old_regime <- ifelse(d1$year <= 1439, 1, 0)
@@ -272,6 +272,7 @@ contrast2 <- c(0, -1, 1)
 contrasts(d1$regime) <- cbind(contrast1, contrast2)
 
 d2 <- collapsed
+# d3 <- d1[d1$king == "matthias" | d1$king == "louis_ii" | d1$king == "vladislaus",]
 d3 <- d1[d1$king == "matthias",]
 old_aristocrats <- c("Michael Orszag Guti", "Nicholas Banfi Alsolendvai", "Nicholas Ujlaki",
                      "Stephen Batori", "Emeric Paloci", "John Rozgonyi", "George Turoci", 
@@ -279,8 +280,8 @@ old_aristocrats <- c("Michael Orszag Guti", "Nicholas Banfi Alsolendvai", "Nicho
                      "Bartholomew Dragfi Belteki", "William Vitovec")
 d3$aristocrat <- ifelse(d3$name %in% old_aristocrats, 1, 0)
 d3$castles <- ifelse(is.na(d3$castles), 0, d3$castles)
-d3$change <- d2$change[match(d3$p_id, d2$p_id)]
-d3$change <- ifelse(is.na(d3$change), 0, d3$change)
+
+d3$change <- ifelse(d3$king_ap != d3$king, 1, 0)
 
 d2 <- d2[complete.cases(d2),]
 d3 <- d3[complete.cases(d3),]
